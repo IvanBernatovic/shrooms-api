@@ -10,7 +10,7 @@ class Mushroom extends Model
         'bruises','odor','gillAttachment','gillSpacing','gillSize','gillColor',
         'stalkShape','stalkRoot','stalkSurfaceAboveRing','stalkSurfaceBelowRing',
         'stalkColorAboveRing','stalkColorBelowRing','veilType','veilColor','ringNumber',
-        'ringType','sporePrintColor','population','habitat'];
+        'ringType','sporePrintColor','population','habitat', 'name', 'probability', 'result'];
     
     
 }
