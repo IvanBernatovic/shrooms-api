@@ -25,9 +25,10 @@ class MushroomController extends Controller
         'ringType','sporePrintColor','population','habitat'];
     
     protected $validationRules = [
+        'name' => 'required',
         'capShape' => 'required|in:b,c,f,x,k,s',
         'capSurface' => 'required|in:f,g,y,s',
-        'capColor' => 'required|in:n,b,c,g,r',
+        'capColor' => 'required|in:n,b,c,g,r,p,u,e,w,y',
         'bruises' => 'required|in:t,f',
         'odor' => 'required|in:a,l,c,y,f,m,n,p,s',
         'gillAttachment' => 'required|in:a,d,f,n',
@@ -35,7 +36,7 @@ class MushroomController extends Controller
         'gillSize' => 'required|in:b,n',
         'gillColor' => 'required|in:k,n,b,h,g,r,o,p,u,e,w,y',
         'stalkShape' => 'required|in:e,t',
-        'stalkRoot' => 'required|in:b,c,u,e,z,r,?', //provjeri upitnik ovdje
+        'stalkRoot' => 'required|in:b,c,u,e,z,r,m',
         'stalkSurfaceAboveRing' => 'required|in:f,y,k,s',
         'stalkSurfaceBelowRing' => 'required|in:f,y,k,s',
         'stalkColorAboveRing' => 'required|in:n,b,c,g,o,p,e,w,y',
@@ -51,7 +52,7 @@ class MushroomController extends Controller
 
     public function index()
     {
-        return 'all mushrooms';
+        return Mushroom::all();
     }
 
     public function store(Request $request)
@@ -61,11 +62,17 @@ class MushroomController extends Controller
         if ($validator->fails()) {
             throw new StoreResourceFailedException('Invalid mushroom data.', $validator->errors());
         }
-
-
-        $azureResponse = $this->sendRequestToAzure($request->only($this->validInputFields));
         
-        dd($azureResponse);
+        $data = $request->only($this->validInputFields);
+
+        $azureResponse = $this->sendRequestToAzure($data);
+        $responseBody = json_decode($azureResponse->getBody(), true);
+
+        $data['name'] = $request->get('name');
+        $data['result'] = $this->getResultFromResponse($responseBody);
+        $data['probability'] = $this->getProbabiltyFromResponse($responseBody);
+
+        return Mushroom::create($data);
     }
 
     public function sendRequestToAzure($data)
@@ -97,5 +104,16 @@ class MushroomController extends Controller
         ]);
 
         return $response;
+    }
+
+    private function getResultFromResponse($responseBody)
+    {
+        return $responseBody['Results']['output1']['value']['Values'][0][23];
+    }
+
+
+    private function getProbabiltyFromResponse($responseBody)
+    {
+        return $responseBody['Results']['output1']['value']['Values'][0][24];
     }
 }

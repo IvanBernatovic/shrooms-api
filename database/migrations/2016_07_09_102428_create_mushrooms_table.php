@@ -15,6 +15,8 @@ class CreateMushroomsTable extends Migration
         Schema::create('mushrooms', function (Blueprint $table) {
             $table->increments('id');
 
+            $table->string('name');
+
             $table->string('capShape');
             $table->string('capSurface');
             $table->string('capColor');
@@ -42,6 +44,8 @@ class CreateMushroomsTable extends Migration
             $table->string('population');
             $table->string('habitat');
             $table->string('result');
+
+            $table->string('probability');
 
             $table->timestamps();
         });

@@ -11,16 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
     $api->group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api'], function($api){
         // make mushroom API endpoints only for index and store requests
         $api->resource('mushrooms', 'MushroomController', ['only' => ['index', 'store']]);
-        $api->get('guzzle', 'MushroomController@sendRequestToAzure');
     });
 });
